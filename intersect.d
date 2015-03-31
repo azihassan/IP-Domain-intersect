@@ -6,29 +6,22 @@ import std.socket;
 
 int main(string[] args)
 {
-	string from;
-	string to;
-	string domain;
-	string[] addrs;
-	string[] results;
-
-	try
-	{
-		from = args[1];
-		to = args[2];
-		domain = args[3];
-	}
-	catch(RangeError e)
+	if(args.length < 4)
 	{
 		writeln("Usage : " ~ args[0] ~ " <from> <to> <domain>");
-		return 0;
+		return 1;
 	}
 
-	addrs = array(getAddress(domain).map!("a.toAddrString()").uniq());
+	string from = args[1];
+	string to = args[2];
+	string domain = args[3];
 
-	foreach(uint ip; ipToInt(from) .. ipToInt(to))
+	string[] addrs = domain.getAddress.map!(x => x.toAddrString).uniq.array;
+	string[] results;
+
+	foreach(ip; from.ipToInt .. to.ipToInt)
 	{
-		string ipAddr = intToIp(ip);
+		string ipAddr = ip.intToIp;
 		if(addrs.countUntil(ipAddr) != -1)
 		{
 			results ~= ipAddr;
